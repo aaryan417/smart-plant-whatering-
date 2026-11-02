@@ -1,4 +1,4 @@
-# Smart Plant Watering System (स्मार्ट पौध सिंचाई प्रणाली)
+# JalRakshak | Smart Farming for a Better Tomorrow (जलरक्षक)
 
 A clean, presentation-ready agricultural dashboard prototype that provides real-time, weather-informed watering advice to help farmers optimize irrigation and save water.
 

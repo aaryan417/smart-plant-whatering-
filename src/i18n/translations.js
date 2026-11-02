@@ -4,8 +4,8 @@
 export const translations = {
   en: {
     // Header & Meta
-    appTitle: "Smart Plant Watering System",
-    appSubtitle: "Weather-Aware Agricultural Advisory Prototype",
+    appTitle: "JalRakshak",
+    appSubtitle: "Smart Farming for a Better Tomorrow",
     tagline: "Empowering farmers with smart, water-saving irrigation guidance",
     demoBadge: "Demo Prototype",
     language: "Language",
@@ -182,13 +182,13 @@ export const translations = {
     errorWeather: "Unable to retrieve live weather data. Please check network connection and click Refresh.",
     retryBtn: "Retry Fetch",
     dismissBtn: "Dismiss",
-    footerText: "Smart Plant Watering System Prototype • Built for Farmers",
+    footerText: "JalRakshak Prototype • Built for Farmers",
   },
 
   hi: {
     // Header & Meta
-    appTitle: "स्मार्ट पौध सिंचाई प्रणाली",
-    appSubtitle: "मौसम आधारित आधुनिक कृषि सलाह प्रोटोटाइप",
+    appTitle: "जलरक्षक | JalRakshak",
+    appSubtitle: "Smart Farming for a Better Tomorrow",
     tagline: "किसानों के लिए पानी की बचत और सही समय पर सिंचाई की तकनीक",
     demoBadge: "डेमो प्रोटोटाइप",
     language: "भाषा",
@@ -365,6 +365,6 @@ export const translations = {
     errorWeather: "लाइव मौसम डेटा प्राप्त नहीं हो सका। कृपया इंटरनेट जांचें और पुनः प्रयास करें।",
     retryBtn: "पुनः प्रयास करें",
     dismissBtn: "खारिज करें",
-    footerText: "स्मार्ट पौध सिंचाई प्रणाली प्रोटोटाइप • किसानों के लिए निर्मित",
+    footerText: "जलरक्षक प्रोटोटाइप • किसानों के लिए निर्मित",
   }
 };
