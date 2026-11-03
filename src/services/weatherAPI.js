@@ -1,11 +1,15 @@
 // src/services/weatherAPI.js
 
 export const DEFAULT_LOCATION = {
-  name: 'Bhopal, Madhya Pradesh',
-  lat: 23.2599,
-  lon: 77.4126,
+  name: 'Betul, Madhya Pradesh',
+  lat: 21.91,
+  lon: 77.90,
   isGps: false,
 };
+
+// Log the default location on module load
+console.log('📌 [weatherAPI] DEFAULT_LOCATION set to:', DEFAULT_LOCATION.name, 
+           `(${DEFAULT_LOCATION.lat}°N, ${DEFAULT_LOCATION.lon}°E)`);
 
 /**
  * Reverse geocode latitude and longitude to a human-readable city/state name.
@@ -106,14 +110,21 @@ export function getWeatherMeta(code) {
  * @param {number} longitude
  */
 export async function fetchWeatherData(latitude = DEFAULT_LOCATION.lat, longitude = DEFAULT_LOCATION.lon) {
+  console.log('🌐 [weatherAPI] Fetching weather from Open-Meteo API:', 
+             `latitude=${latitude.toFixed(2)}, longitude=${longitude.toFixed(2)}`);
+  
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum&timezone=auto&forecast_days=7`;
 
+  console.log('📡 [weatherAPI] API URL:', url);
   const response = await fetch(url);
   if (!response.ok) {
+    console.error('❌ [weatherAPI] Open-Meteo API error:', response.status, response.statusText);
     throw new Error(`Open-Meteo HTTP error: ${response.status}`);
   }
 
   const data = await response.json();
+  console.log('✅ [weatherAPI] Weather data received successfully. Current temp:', 
+             data.current?.temperature_2m, '°C');
 
   // Format current
   const current = {
@@ -139,6 +150,8 @@ export async function fetchWeatherData(latitude = DEFAULT_LOCATION.lat, longitud
       rainSum: parseFloat((daily.precipitation_sum ? daily.precipitation_sum[i] : 0).toFixed(1)),
     });
   }
+
+  console.log('📊 [weatherAPI] Processed', dailyList.length, 'days of forecast data');
 
   return {
     raw: data,

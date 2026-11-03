@@ -88,7 +88,7 @@ export default function WeatherCard({
             <div className="flex items-center gap-1.5 text-xs text-slate-600 mt-1">
               <MapPin className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
               <span className="font-semibold text-slate-800">
-                {currentLocation?.name || 'Bhopal, Madhya Pradesh'}
+                {currentLocation?.name || 'Betul, Madhya Pradesh'}
               </span>
               <span className="text-[11px] text-slate-400 font-mono">
                 ({currentLocation?.lat?.toFixed(2)}°N, {currentLocation?.lon?.toFixed(2)}°E)

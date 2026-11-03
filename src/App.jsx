@@ -47,19 +47,42 @@ export default function App() {
     localStorage.setItem('smart_irrigation_lang', newLang);
   };
 
-  // 3. Location state (Bhopal default fallback, or persisted coordinates from localStorage)
+  // 3. Location state (Betul default fallback, or persisted coordinates from localStorage)
   const [currentLocation, setCurrentLocation] = useState(() => {
+    console.log('🌍 [JalRakshak] Initializing location state...');
+    
     try {
       const saved = localStorage.getItem('smart_irrigation_location');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
+          // Check if this is old Bhopal data (coordinates within 0.1 degree of old Bhopal location)
+          const isBhopalData = (
+            Math.abs(parsed.lat - 23.2599) < 0.1 && 
+            Math.abs(parsed.lon - 77.4126) < 0.1
+          );
+          
+          if (isBhopalData) {
+            console.log('🗑️  [JalRakshak] Detected old Bhopal data in localStorage. Clearing and using Betul default.');
+            localStorage.removeItem('smart_irrigation_location');
+            console.log('✅ [JalRakshak] Using DEFAULT location:', DEFAULT_LOCATION.name, 
+                       `(${DEFAULT_LOCATION.lat}°N, ${DEFAULT_LOCATION.lon}°E)`);
+            return DEFAULT_LOCATION;
+          }
+          
+          console.log('📍 [JalRakshak] Loaded saved location from localStorage:', 
+                     parsed.name || 'Unknown', 
+                     `(${parsed.lat.toFixed(2)}°N, ${parsed.lon.toFixed(2)}°E)`,
+                     parsed.isGps ? '[GPS Detected]' : '[Manual/Default]');
           return parsed;
         }
       }
     } catch (e) {
-      console.warn('Failed to parse saved location:', e);
+      console.warn('⚠️  [JalRakshak] Failed to parse saved location:', e);
     }
+    
+    console.log('✅ [JalRakshak] No saved location found. Using DEFAULT location:', DEFAULT_LOCATION.name, 
+               `(${DEFAULT_LOCATION.lat}°N, ${DEFAULT_LOCATION.lon}°E)`);
     return DEFAULT_LOCATION;
   });
 
@@ -141,13 +164,17 @@ export default function App() {
 
   // Fetch live weather data from Open-Meteo for coordinates
   const loadWeather = useCallback(async (loc = currentLocation) => {
+    console.log('🌤️  [JalRakshak] Fetching weather data for:', 
+               loc.name || 'Unknown Location', 
+               `(${loc.lat.toFixed(2)}°N, ${loc.lon.toFixed(2)}°E)`);
     try {
       setLoading(true);
       setWeatherError(null);
       const data = await fetchWeatherData(loc.lat, loc.lon);
       setWeatherData(data);
+      console.log('✅ [JalRakshak] Weather data loaded successfully for:', loc.name || 'Unknown Location');
     } catch (err) {
-      console.error('Failed to load Open-Meteo weather:', err);
+      console.error('❌ [JalRakshak] Failed to load Open-Meteo weather:', err);
       setWeatherError(err.message || 'Error fetching weather data');
     } finally {
       setLoading(false);
@@ -160,7 +187,10 @@ export default function App() {
 
   // GPS Location Detection Handler
   const handleDetectLocation = () => {
+    console.log('📍 [JalRakshak] User clicked "Use My Current Location" button');
+    
     if (!navigator.geolocation) {
+      console.warn('⚠️  [JalRakshak] Geolocation not supported by browser');
       setLocationError(t.geoUnsupported);
       return;
     }
@@ -177,8 +207,11 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+        console.log('✅ [JalRakshak] GPS coordinates obtained:', 
+                   `(${latitude.toFixed(4)}°N, ${longitude.toFixed(4)}°E)`);
         try {
           const placeName = await reverseGeocode(latitude, longitude);
+          console.log('🏘️  [JalRakshak] Reverse geocoded to:', placeName);
 
           const newLocation = {
             name: placeName,
@@ -187,11 +220,12 @@ export default function App() {
             isGps: true,
           };
 
+          console.log('💾 [JalRakshak] Saving GPS location to localStorage and updating state');
           setCurrentLocation(newLocation);
           localStorage.setItem('smart_irrigation_location', JSON.stringify(newLocation));
           await loadWeather(newLocation);
         } catch (err) {
-          console.error('Error during post-geocoding fetch:', err);
+          console.error('❌ [JalRakshak] Error during reverse geocoding or weather fetch:', err);
           setLocationError(t.geoGeneralError);
         } finally {
           setIsDetectingLocation(false);
@@ -199,15 +233,19 @@ export default function App() {
       },
       (error) => {
         setIsDetectingLocation(false);
-        console.warn('Geolocation error:', error);
+        console.warn('❌ [JalRakshak] Geolocation error:', error.message, `(Code: ${error.code})`);
 
         if (error.code === error.PERMISSION_DENIED) {
+          console.log('🚫 [JalRakshak] User denied location permission. Using default location.');
           setLocationError(t.geoPermissionDenied);
         } else if (error.code === error.POSITION_UNAVAILABLE) {
+          console.log('⚠️  [JalRakshak] Location position unavailable. Using default location.');
           setLocationError(t.geoUnavailable);
         } else if (error.code === error.TIMEOUT) {
+          console.log('⏱️  [JalRakshak] Location detection timed out. Using default location.');
           setLocationError(t.geoTimeout);
         } else {
+          console.log('❌ [JalRakshak] Unknown geolocation error. Using default location.');
           setLocationError(error.message || t.geoGeneralError);
         }
       },
@@ -259,7 +297,7 @@ export default function App() {
       irrigationMethodHi: cropSchedule?.method?.labelHi || 'पारंपरिक बहाव',
       growthStageEn: cropSchedule?.currentStage?.nameEn || 'Vegetative',
       growthStageHi: cropSchedule?.currentStage?.nameHi || 'वानस्पतिक',
-      locationName: currentLocation?.name || 'Bhopal, MP',
+      locationName: currentLocation?.name || 'Betul, MP',
     };
   }, [cropSchedule, soilMoisture, rainMetrics, currentLocation, lang]);
 
@@ -493,7 +531,7 @@ export default function App() {
             <span className="font-semibold text-slate-700">{t.appTitle}</span> — {t.footerText}
           </div>
           <div className="text-[11px] text-slate-400">
-            Open-Meteo Weather API • {currentLocation?.name || 'Bhopal, India'} ({currentLocation?.lat?.toFixed(2)}°N, {currentLocation?.lon?.toFixed(2)}°E)
+            Open-Meteo Weather API • {currentLocation?.name || 'Betul, India'} ({currentLocation?.lat?.toFixed(2)}°N, {currentLocation?.lon?.toFixed(2)}°E)
           </div>
         </div>
       </footer>

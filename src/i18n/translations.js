@@ -37,7 +37,7 @@ export const translations = {
     geoUnavailable: "Location information is unavailable. Please verify your GPS signal and internet connection.",
     geoTimeout: "Location detection timed out. Please try clicking the button again.",
     geoUnsupported: "Geolocation is not supported by your browser.",
-    geoGeneralError: "Unable to detect location. Falling back to default location (Bhopal).",
+    geoGeneralError: "Unable to detect location. Falling back to default location (Betul).",
 
     // Section 2: 7-Day Forecast
     forecastTitle: "7-Day Weather Forecast",
@@ -220,7 +220,7 @@ export const translations = {
     geoUnavailable: "स्थान की जानकारी उपलब्ध नहीं है। कृपया अपना जीपीएस सिग्नल और इंटरनेट कनेक्शन जांचें।",
     geoTimeout: "जीपीएस अनुरोध का समय समाप्त (टाइमआउट) हो गया। कृपया बटन को पुनः दबाएं।",
     geoUnsupported: "आपके ब्राउज़र में जीपीएस सुविधा उपलब्ध नहीं है।",
-    geoGeneralError: "जीपीएस स्थान नहीं मिल सका। डिफ़ॉल्ट रूप से भोपाल का मौसम दिखाया जा रहा है।",
+    geoGeneralError: "जीपीएस स्थान नहीं मिल सका। डिफ़ॉल्ट रूप से बेतुल का मौसम दिखाया जा रहा है।",
 
     // Section 2: 7-Day Forecast
     forecastTitle: "7 दिनों का मौसम पूर्वानुमान",
